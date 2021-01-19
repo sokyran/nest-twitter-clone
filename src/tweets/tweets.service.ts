@@ -1,0 +1,46 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { CreateTweetInput } from './dto/create-tweet.input'
+import { Tweet } from './tweet.entity'
+
+@Injectable()
+export class TweetsService {
+  constructor(
+    @InjectRepository(Tweet) private tweetRepository: Repository<Tweet>,
+  ) {}
+
+  private readonly logger = new Logger('tweetService')
+
+  async create(createTweetInput: CreateTweetInput): Promise<Tweet> {
+    const { text } = createTweetInput
+
+    const tweet = new Tweet()
+    tweet.text = text
+    tweet.date = new Date().toISOString()
+    await tweet.save()
+
+    return tweet
+  }
+
+  async findAll(): Promise<Tweet[]> {
+    return await this.tweetRepository.find()
+  }
+
+  async findOne(id: number) {
+    const found = await this.tweetRepository.findOne({ id })
+    if (found && Object.values(found).length > 0) {
+      return found
+    }
+    throw new NotFoundException(`Tweet with "${id}" id was not found`)
+  }
+
+  async remove(id: number): Promise<any> {
+    const result = await this.tweetRepository.delete({ id })
+    this.logger.debug(result)
+    if (result.affected) {
+      return result.affected
+    }
+    throw new NotFoundException(`Tweet with "${id}" id was not found`)
+  }
+}
