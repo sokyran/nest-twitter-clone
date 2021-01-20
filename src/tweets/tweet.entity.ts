@@ -18,6 +18,9 @@ export class Tweet extends BaseEntity {
   @Column()
   date: string
 
-  @ManyToOne(() => User, (user) => user.tweets, { eager: true })
+  @Column()
+  userId: number
+
+  @ManyToOne(() => User, (user) => user.tweets, { eager: false })
   user: User
 }

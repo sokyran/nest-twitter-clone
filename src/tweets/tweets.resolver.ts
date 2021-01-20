@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { TweetsService } from './tweets.service'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { TweetType } from './tweet.type'
@@ -6,11 +14,26 @@ import { Logger, UseGuards } from '@nestjs/common'
 import { User } from 'src/auth/user.entity'
 import { GetUser } from 'src/auth/get-user.decorator'
 import { GqlAuthGuard } from 'src/auth/gql.guard'
+import { AuthService } from 'src/auth/auth.service'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {
-  constructor(private readonly tweetsService: TweetsService) {}
+  constructor(
+    private readonly tweetsService: TweetsService,
+    private readonly authService: AuthService,
+  ) {}
   private readonly logger = new Logger('tweetsResolver')
+
+  @Query(() => [TweetType], { name: 'tweets' })
+  async findAll() {
+    const res = await this.tweetsService.findAll()
+    return res
+  }
+
+  @Query(() => TweetType, { name: 'tweet' })
+  async findOne(@Args('id', { type: () => Int }) id: number) {
+    return await this.tweetsService.findOne(id)
+  }
 
   @Mutation(() => TweetType)
   @UseGuards(GqlAuthGuard)
@@ -21,18 +44,14 @@ export class TweetsResolver {
     return this.tweetsService.create(createTweetInput, user)
   }
 
-  @Query(() => [TweetType], { name: 'tweets' })
-  findAll() {
-    return this.tweetsService.findAll()
-  }
-
-  @Query(() => TweetType, { name: 'tweet' })
-  async findOne(@Args('id', { type: () => Int }) id: number) {
-    return await this.tweetsService.findOne(id)
-  }
-
   @Mutation(() => Int)
   removeTweet(@Args('id', { type: () => Int }) id: number) {
     return this.tweetsService.remove(id)
+  }
+
+  @ResolveField()
+  async user(@Parent() tweet: TweetType) {
+    const { userId } = tweet
+    return await this.authService.findOne(userId)
   }
 }

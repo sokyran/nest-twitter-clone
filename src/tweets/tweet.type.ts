@@ -12,6 +12,9 @@ export class TweetType {
   @Field()
   date: string
 
+  @Field()
+  userId: number
+
   @Field(() => NoPassUserType)
   user: NoPassUserType
 }

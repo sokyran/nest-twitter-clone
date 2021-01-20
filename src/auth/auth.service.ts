@@ -13,6 +13,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  async findOne(id: number): Promise<Partial<User>> {
+    return await this.userRepository.findOne({ id })
+  }
+
   async signUp(userInfo: UserInfoInput): Promise<Partial<User>> {
     const { username, password } = userInfo
     const user = new User()
