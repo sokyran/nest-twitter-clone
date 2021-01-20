@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UserInfoInput } from './dto/user-info.input'
@@ -23,9 +28,18 @@ export class AuthService {
     const salt = await bcrypt.genSalt()
     user.username = username
     user.password = await bcrypt.hash(password, salt)
-    await user.save()
 
-    return { username: user.username, id: user.id }
+    try {
+      await user.save()
+      return { username: user.username, id: user.id }
+    } catch (error) {
+      if (error.code === '23505') {
+        // duplicate username
+        throw new ConflictException('Username already exists')
+      } else {
+        throw new InternalServerErrorException()
+      }
+    }
   }
 
   async validateLogin(userInfo: UserInfoInput): Promise<User> | null {
