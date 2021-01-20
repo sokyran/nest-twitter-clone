@@ -24,7 +24,7 @@ export class AuthService {
     return { username: user.username, id: user.id }
   }
 
-  async validateLogin(userInfo: UserInfoInput): Promise<Partial<User>> | null {
+  async validateLogin(userInfo: UserInfoInput): Promise<User> | null {
     const { username, password } = userInfo
 
     const found = await this.userRepository.findOne({ username })
@@ -36,8 +36,11 @@ export class AuthService {
     return null
   }
 
-  async genToken(user: Partial<User>): Promise<{ access_token: string }> {
-    const payload = { username: user.username, sub: user.id }
+  async genToken(user: User): Promise<{ access_token: string }> {
+    const payload = {
+      username: user.username,
+      id: user.id,
+    }
     return {
       access_token: this.jwtService.sign(payload),
     }
