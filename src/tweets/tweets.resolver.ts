@@ -2,7 +2,10 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { TweetsService } from './tweets.service'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { TweetType } from './tweet.type'
-import { Logger } from '@nestjs/common'
+import { Logger, UseGuards } from '@nestjs/common'
+import { User } from 'src/auth/user.entity'
+import { GetUser } from 'src/auth/get-user.decorator'
+import { GqlAuthGuard } from 'src/auth/gql.guard'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {
@@ -10,8 +13,12 @@ export class TweetsResolver {
   private readonly logger = new Logger('tweetsResolver')
 
   @Mutation(() => TweetType)
-  createTweet(@Args('createTweetInput') createTweetInput: CreateTweetInput) {
-    return this.tweetsService.create(createTweetInput)
+  @UseGuards(GqlAuthGuard)
+  createTweet(
+    @Args('createTweetInput') createTweetInput: CreateTweetInput,
+    @GetUser() user: User,
+  ) {
+    return this.tweetsService.create(createTweetInput, user)
   }
 
   @Query(() => [TweetType], { name: 'tweets' })

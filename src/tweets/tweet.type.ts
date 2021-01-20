@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { NoPassUserType } from 'src/auth/user.type'
 
 @ObjectType('Tweet')
 export class TweetType {
@@ -10,4 +11,7 @@ export class TweetType {
 
   @Field()
   date: string
+
+  @Field(() => NoPassUserType)
+  user: NoPassUserType
 }

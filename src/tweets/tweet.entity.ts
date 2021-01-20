@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { User } from '../auth/user.entity'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 @Entity()
 export class Tweet extends BaseEntity {
@@ -10,4 +17,7 @@ export class Tweet extends BaseEntity {
 
   @Column()
   date: string
+
+  @ManyToOne(() => User, (user) => user.tweets, { eager: true })
+  user: User
 }

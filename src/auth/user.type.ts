@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { TweetType } from 'src/tweets/tweet.type'
 
 @ObjectType('User')
 export class UserType {
@@ -10,6 +11,9 @@ export class UserType {
 
   @Field()
   password: string
+
+  @Field(() => [TweetType])
+  tweets: TweetType[]
 }
 
 @ObjectType('NoPassUser')

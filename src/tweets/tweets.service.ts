@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { User } from '../auth/user.entity'
 import { Repository } from 'typeorm'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { Tweet } from './tweet.entity'
@@ -12,14 +13,13 @@ export class TweetsService {
 
   private readonly logger = new Logger('tweetService')
 
-  async create(createTweetInput: CreateTweetInput): Promise<Tweet> {
+  async create(createTweetInput: CreateTweetInput, user: User): Promise<Tweet> {
     const { text } = createTweetInput
-
     const tweet = new Tweet()
     tweet.text = text
     tweet.date = new Date().toISOString()
+    tweet.user = user
     await tweet.save()
-
     return tweet
   }
 
@@ -37,7 +37,6 @@ export class TweetsService {
 
   async remove(id: number): Promise<any> {
     const result = await this.tweetRepository.delete({ id })
-    this.logger.debug(result)
     if (result.affected) {
       return result.affected
     }
