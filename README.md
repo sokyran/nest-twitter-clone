@@ -23,3 +23,5 @@ Twitter clone made with [Nest](https://github.com/nestjs/nest) framework.
 - GQL UseGuards (https://stackoverflow.com/questions/55269777/nestjs-get-current-user-in-graphql-resolver-authenticated-with-jwt)
 
 - How to create custom decorator in GQL (https://stackoverflow.com/questions/61445185/how-to-implement-user-guards-in-nestjs-graphql)
+
+- How to remove file with sensitive info from commit (https://stackoverflow.com/questions/12481639/remove-files-from-git-commit/15321456#15321456)
