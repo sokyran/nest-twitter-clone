@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, OmitType } from '@nestjs/graphql'
 import { TweetType } from 'src/tweets/tweet.type'
 
 @ObjectType('User')
@@ -17,13 +17,7 @@ export class UserType {
 }
 
 @ObjectType('NoPassUser')
-export class NoPassUserType {
-  @Field(() => ID)
-  id: number
-
-  @Field()
-  username: string
-}
+export class NoPassUserType extends OmitType(UserType, ['password']) {}
 
 @ObjectType('AccessToken')
 export class AccessToken {
