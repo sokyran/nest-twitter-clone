@@ -17,4 +17,7 @@ export class TweetType {
 
   @Field(() => UserType)
   user: UserType
+
+  @Field({ nullable: true })
+  imageUrl: string
 }

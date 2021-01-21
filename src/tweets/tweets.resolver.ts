@@ -11,10 +11,10 @@ import { TweetsService } from './tweets.service'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { TweetType } from './tweet.type'
 import { Logger, UseGuards } from '@nestjs/common'
-import { User } from 'src/auth/user.entity'
-import { GetUser } from 'src/auth/get-user.decorator'
-import { GqlAuthGuard } from 'src/auth/gql.guard'
-import { AuthService } from 'src/auth/auth.service'
+import { User } from '../auth/user.entity'
+import { GetUser } from '../auth/get-user.decorator'
+import { GqlAuthGuard } from '../auth/gql.guard'
+import { AuthService } from '../auth/auth.service'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {

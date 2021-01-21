@@ -4,4 +4,7 @@ import { InputType, Field } from '@nestjs/graphql'
 export class CreateTweetInput {
   @Field(() => String)
   text: string
+
+  @Field(() => String, { nullable: true })
+  imageUrl: string
 }

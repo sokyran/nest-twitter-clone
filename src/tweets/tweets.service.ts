@@ -14,17 +14,22 @@ export class TweetsService {
   private readonly logger = new Logger('tweetService')
 
   async create(createTweetInput: CreateTweetInput, user: User): Promise<Tweet> {
-    const { text } = createTweetInput
+    const { text, imageUrl } = createTweetInput
     const tweet = new Tweet()
     tweet.text = text
     tweet.date = new Date().toISOString()
     tweet.user = user
+    tweet.imageUrl = imageUrl
     await tweet.save()
     return tweet
   }
 
   async findAll(): Promise<Tweet[]> {
     return await this.tweetRepository.find()
+  }
+
+  async findByUser(userId: number): Promise<Tweet[]> {
+    return await this.tweetRepository.find({ userId })
   }
 
   async findOne(id: number) {

@@ -18,6 +18,9 @@ export class Tweet extends BaseEntity {
   @Column()
   date: string
 
+  @Column({ nullable: true })
+  imageUrl: string
+
   @Column()
   userId: number
 
