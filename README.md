@@ -25,6 +25,10 @@ Twitter clone made with [Nest](https://github.com/nestjs/nest) framework.
 
 - How to remove file with sensitive info from commit (https://stackoverflow.com/questions/12481639/remove-files-from-git-commit/15321456#15321456)
 
-- Exclude proptery from graphql type (https://docs.nestjs.com/graphql/mapped-types#omit)
+- Exclude property from graphql type (https://docs.nestjs.com/graphql/mapped-types#omit)
 
 - Class validator decorators (https://github.com/typestack/class-validator#validation-decorators)
+
+- How to limit depth of GQL Requests (https://github.com/stems/graphql-depth-limit)
+
+- Format GQL Errors (https://stackoverflow.com/questions/61045881/why-arent-nestjs-graphql-validation-errors-placed-in-the-error-message-field)
