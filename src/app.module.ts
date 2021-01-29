@@ -23,14 +23,14 @@ import * as depthLimit from 'graphql-depth-limit'
     GraphQLModule.forRoot({
       autoSchemaFile: true,
       validationRules: [depthLimit(3)],
-      formatError: (error: GraphQLError) => {
-        console.log(error)
-        const graphQLFormattedError: GraphQLFormattedError = {
-          message: error.message,
-          extensions: error.extensions.code,
-        }
-        return graphQLFormattedError
-      },
+      // formatError: (error: GraphQLError) => {
+      //   console.log(error)
+      //   const graphQLFormattedError: GraphQLFormattedError = {
+      //     message: error.message,
+      //     extensions: error.extensions.code,
+      //   }
+      //   return graphQLFormattedError
+      // },
     }),
     TweetsModule,
     AuthModule,

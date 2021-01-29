@@ -3,7 +3,8 @@ import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { TweetsService } from 'src/tweets/tweets.service'
 import { AuthService } from './auth.service'
 import { UserInfoInput } from './dto/user-info.input'
-import { AccessToken, UserType } from './user.type'
+import { UserLoginInput } from './dto/user-login.input'
+import { UserType, UserWithToken } from './user.type'
 
 @Resolver(() => UserType)
 export class AuthResolver {
@@ -19,9 +20,9 @@ export class AuthResolver {
     return await this.authService.signUp(userInfo)
   }
 
-  @Mutation(() => AccessToken)
-  async signIn(@Args('userInfoInput') userInfo: UserInfoInput) {
-    return await this.authService.signIn(userInfo)
+  @Mutation(() => UserWithToken)
+  async signIn(@Args('userLoginInput') userLogin: UserLoginInput) {
+    return await this.authService.signIn(userLogin)
   }
 
   @ResolveField()

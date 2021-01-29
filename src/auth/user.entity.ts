@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 
 @Entity()
-@Unique(['username'])
+@Unique(['usertag'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
@@ -18,7 +18,13 @@ export class User extends BaseEntity {
   username: string
 
   @Column()
+  usertag: string
+
+  @Column()
   password: string
+
+  @Column({ nullable: true, default: 'https://bp.io/avatar/img/base_mm_1.png' })
+  avatar: string
 
   @OneToMany(() => Tweet, (tweet) => tweet.user, { eager: false })
   tweets: Tweet

@@ -9,12 +9,24 @@ export class UserType {
   @Field()
   username: string
 
-  @Field(() => [TweetType])
+  @Field()
+  usertag: string
+
+  @Field({ nullable: true })
+  avatar: string
+
+  @Field(() => [TweetType], { nullable: true })
   tweets: TweetType[]
 }
 
 @ObjectType('AccessToken')
 export class AccessToken {
+  @Field()
+  access_token: string
+}
+
+@ObjectType('UserWithToken')
+export class UserWithToken extends UserType {
   @Field()
   access_token: string
 }
