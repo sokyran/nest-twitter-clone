@@ -59,24 +59,24 @@ export class AuthService {
     return null
   }
 
-  async genToken(user: User): Promise<{ access_token: string }> {
+  async genToken(user: User): Promise<{ accessToken: string }> {
     const payload = {
       id: user.id,
       usertag: user.usertag,
       username: user.username,
     }
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     }
   }
 
   async signIn(
     userLogin: UserLoginInput,
-  ): Promise<User | { access_token: string }> {
+  ): Promise<User | { accessToken: string }> {
     const valid = await this.validateLogin(userLogin)
     if (valid) {
       const token = await this.genToken(valid)
-      return { access_token: token.access_token, ...valid }
+      return { accessToken: token.accessToken, ...valid }
     }
     throw new UnauthorizedException('Login is invalid')
   }

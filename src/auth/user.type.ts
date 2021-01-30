@@ -19,14 +19,8 @@ export class UserType {
   tweets: TweetType[]
 }
 
-@ObjectType('AccessToken')
-export class AccessToken {
-  @Field()
-  access_token: string
-}
-
 @ObjectType('UserWithToken')
 export class UserWithToken extends UserType {
   @Field()
-  access_token: string
+  accessToken: string
 }
