@@ -15,6 +15,9 @@ export class TweetType {
   @Field()
   userId: number
 
+  @Field()
+  likes: number
+
   @Field(() => UserType)
   user: UserType
 

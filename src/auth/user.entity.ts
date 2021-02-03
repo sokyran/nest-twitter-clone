@@ -23,6 +23,9 @@ export class User extends BaseEntity {
   @Column()
   password: string
 
+  @Column('int', { array: true, default: {} })
+  likedTweets: number[]
+
   @Column({
     nullable: true,
     default:

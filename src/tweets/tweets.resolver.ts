@@ -45,8 +45,27 @@ export class TweetsResolver {
   }
 
   @Mutation(() => Int)
+  @UseGuards(GqlAuthGuard)
   removeTweet(@Args('id', { type: () => Int }) id: number) {
     return this.tweetsService.remove(id)
+  }
+
+  @Mutation(() => TweetType)
+  @UseGuards(GqlAuthGuard)
+  likeTweet(
+    @Args('id', { type: () => Int }) id: number,
+    @GetUser() user: User,
+  ) {
+    return this.tweetsService.updateLikes(id, user, true)
+  }
+
+  @Mutation(() => TweetType)
+  @UseGuards(GqlAuthGuard)
+  unlikeTweet(
+    @Args('id', { type: () => Int }) id: number,
+    @GetUser() user: User,
+  ) {
+    return this.tweetsService.updateLikes(id, user, false)
   }
 
   @ResolveField()

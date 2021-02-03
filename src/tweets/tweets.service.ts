@@ -9,6 +9,7 @@ import { Tweet } from './tweet.entity'
 export class TweetsService {
   constructor(
     @InjectRepository(Tweet) private tweetRepository: Repository<Tweet>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   private readonly logger = new Logger('tweetService')
@@ -42,11 +43,35 @@ export class TweetsService {
     throw new NotFoundException(`Tweet with "${id}" id was not found`)
   }
 
+  async updateLikes(id: number, user: User, add = true) {
+    const found = await this.findOne(id)
+    const foundUser = await this.userRepository.findOne({ id: user.id })
+    let likes = add ? found.likes + 1 : found.likes - 1
+    if (likes <= 0) {
+      likes = 0
+    }
+
+    if (add) {
+      await this.userRepository.save({
+        ...foundUser,
+        likedTweets:
+          foundUser.likedTweets.indexOf(id) > -1
+            ? foundUser.likedTweets
+            : foundUser.likedTweets.concat(id),
+      })
+    } else {
+      await this.userRepository.save({
+        ...foundUser,
+        likedTweets: foundUser.likedTweets.filter((t) => t !== id),
+      })
+    }
+    return await this.tweetRepository.save({ ...found, likes })
+  }
+
   async remove(id: number): Promise<any> {
     const result = await this.tweetRepository.delete({ id })
     if (result.affected) {
       return result.affected
     }
-    throw new NotFoundException(`Tweet with "${id}" id was not found`)
   }
 }

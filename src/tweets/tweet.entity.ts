@@ -18,12 +18,15 @@ export class Tweet extends BaseEntity {
   @Column()
   date: string
 
-  @Column({ nullable: true })
-  imageUrl: string
-
   @Column()
   userId: number
 
+  @Column({ default: 0 })
+  likes: number
+
   @ManyToOne(() => User, (user) => user.tweets, { eager: false })
   user: User
+
+  @Column({ nullable: true })
+  imageUrl: string
 }

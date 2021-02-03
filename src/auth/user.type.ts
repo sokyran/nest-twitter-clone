@@ -15,6 +15,9 @@ export class UserType {
   @Field({ nullable: true })
   avatar: string
 
+  @Field(() => [Number])
+  likedTweets: number[]
+
   @Field(() => [TweetType], { nullable: true })
   tweets: TweetType[]
 }
