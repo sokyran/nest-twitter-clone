@@ -25,7 +25,9 @@ export class TweetsService {
   }
 
   async findAll(): Promise<Tweet[]> {
-    return await this.tweetRepository.find()
+    const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.orderBy('tweet.date', 'DESC')
+    return await query.getMany()
   }
 
   async findByUser(userId: number): Promise<Tweet[]> {

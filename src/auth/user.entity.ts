@@ -23,7 +23,11 @@ export class User extends BaseEntity {
   @Column()
   password: string
 
-  @Column({ nullable: true, default: 'https://bp.io/avatar/img/base_mm_1.png' })
+  @Column({
+    nullable: true,
+    default:
+      'https://www.meme-arsenal.com/memes/a5dd2f55b36488a10172f4f84352846b.jpg',
+  })
   avatar: string
 
   @OneToMany(() => Tweet, (tweet) => tweet.user, { eager: false })

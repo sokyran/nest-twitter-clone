@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common'
+import { Logger, ValidationPipe } from '@nestjs/common'
 import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { TweetsService } from 'src/tweets/tweets.service'
 import { AuthService } from './auth.service'
@@ -12,6 +12,8 @@ export class AuthResolver {
     private readonly authService: AuthService,
     private readonly tweetsService: TweetsService,
   ) {}
+
+  private readonly logger = new Logger('authResolver')
 
   @Mutation(() => UserType)
   async signUp(
