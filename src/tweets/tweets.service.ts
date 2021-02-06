@@ -4,6 +4,7 @@ import { User } from '../auth/user.entity'
 import { Repository } from 'typeorm'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { Tweet } from './tweet.entity'
+import { CreateCommentInput } from './dto/create-comment.input'
 
 @Injectable()
 export class TweetsService {
@@ -18,17 +19,44 @@ export class TweetsService {
     const { text, imageUrl } = createTweetInput
     const tweet = new Tweet()
     tweet.text = text
-    tweet.date = new Date().toISOString()
     tweet.user = user
     tweet.imageUrl = imageUrl
+    tweet.date = new Date().toISOString()
     await tweet.save()
     return tweet
   }
 
-  async findAll(): Promise<Tweet[]> {
+  async createComment(
+    createCommentInput: CreateCommentInput,
+    user: User,
+  ): Promise<Tweet> {
+    const { text, imageUrl, commentParent } = createCommentInput
+    const tweet = new Tweet()
+    tweet.text = text
+    tweet.user = user
+    tweet.imageUrl = imageUrl
+    tweet.commentParent = commentParent
+    tweet.date = new Date().toISOString()
+    await tweet.save()
+    return tweet
+  }
+
+  async findAll(withComments = false): Promise<Tweet[]> {
     const query = this.tweetRepository.createQueryBuilder('tweet')
     query.orderBy('tweet.date', 'DESC')
+    if (!withComments) {
+      query.where('tweet.commentParent IS NULL')
+    }
     return await query.getMany()
+  }
+
+  async getComments(id: number): Promise<Tweet[]> {
+    const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.where('tweet.commentParent = :tweetId', { tweetId: id })
+
+    const res = await query.getMany()
+    this.logger.debug(res)
+    return res
   }
 
   async findByUser(userId: number): Promise<Tweet[]> {

@@ -15,6 +15,7 @@ import { User } from '../auth/user.entity'
 import { GetUser } from '../auth/get-user.decorator'
 import { GqlAuthGuard } from '../auth/gql.guard'
 import { AuthService } from '../auth/auth.service'
+import { CreateCommentInput } from './dto/create-comment.input'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {
@@ -25,14 +26,22 @@ export class TweetsResolver {
   private readonly logger = new Logger('tweetsResolver')
 
   @Query(() => [TweetType], { name: 'tweets' })
-  async findAll() {
-    const res = await this.tweetsService.findAll()
+  async findAll(
+    @Args('withComments', { type: () => Boolean, nullable: true })
+    withComments: boolean,
+  ) {
+    const res = await this.tweetsService.findAll(withComments)
     return res
   }
 
   @Query(() => TweetType, { name: 'tweet' })
   async findOne(@Args('id', { type: () => Int }) id: number) {
     return await this.tweetsService.findOne(id)
+  }
+
+  @Query(() => [TweetType], { name: 'comments' })
+  async getComments(@Args('id', { type: () => Int }) id: number) {
+    return await this.tweetsService.getComments(id)
   }
 
   @Mutation(() => TweetType)
@@ -42,6 +51,15 @@ export class TweetsResolver {
     @GetUser() user: User,
   ) {
     return this.tweetsService.create(createTweetInput, user)
+  }
+
+  @Mutation(() => TweetType)
+  @UseGuards(GqlAuthGuard)
+  createComment(
+    @Args('createCommentInput') createCommentInput: CreateCommentInput,
+    @GetUser() user: User,
+  ) {
+    return this.tweetsService.createComment(createCommentInput, user)
   }
 
   @Mutation(() => Int)
