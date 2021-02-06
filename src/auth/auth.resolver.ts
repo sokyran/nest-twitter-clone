@@ -1,5 +1,13 @@
 import { Logger, ValidationPipe } from '@nestjs/common'
-import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { TweetsService } from 'src/tweets/tweets.service'
 import { AuthService } from './auth.service'
 import { UserInfoInput } from './dto/user-info.input'
@@ -14,6 +22,13 @@ export class AuthResolver {
   ) {}
 
   private readonly logger = new Logger('authResolver')
+
+  @Query(() => [Int], { name: 'showLikes' })
+  async getLikedTweets(
+    @Args('id', { type: () => Int, nullable: true }) id: number,
+  ) {
+    return await this.authService.getLikes(id)
+  }
 
   @Mutation(() => UserType)
   async signUp(

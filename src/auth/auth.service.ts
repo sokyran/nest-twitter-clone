@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -20,7 +21,19 @@ export class AuthService {
   ) {}
 
   async findOne(id: number): Promise<Partial<User>> {
-    return await this.userRepository.findOne({ id })
+    const found = await this.userRepository.findOne({ id })
+    if (!found) {
+      throw new NotFoundException(`User with id "${id}" does not exist`)
+    }
+    return found
+  }
+
+  async getLikes(id: number | null): Promise<number[]> {
+    if (id === null) {
+      return []
+    }
+    const found = await this.findOne(id)
+    return found.likedTweets
   }
 
   async signUp(userInfo: UserInfoInput): Promise<Partial<User>> {

@@ -32,3 +32,7 @@ Twitter clone made with [Nest](https://github.com/nestjs/nest) framework.
 - How to limit depth of GQL Requests (https://github.com/stems/graphql-depth-limit)
 
 - Format GQL Errors (https://stackoverflow.com/questions/61045881/why-arent-nestjs-graphql-validation-errors-placed-in-the-error-message-field)
+
+- How to import Repository from another module (https://stackoverflow.com/questions/64282183/nestjs-cant-inject-a-repository-from-a-different-module)
+
+- TypeOrm Postgre Array Type (https://stackoverflow.com/questions/57611633/typeorm-array-is-not-supported-in-postgres)
