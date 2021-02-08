@@ -55,7 +55,6 @@ export class TweetsService {
     query.where('tweet.commentParent = :tweetId', { tweetId: id })
 
     const res = await query.getMany()
-    this.logger.debug(res)
     return res
   }
 
