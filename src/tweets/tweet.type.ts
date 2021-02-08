@@ -21,6 +21,9 @@ export class TweetType {
   @Field(() => UserType)
   user: UserType
 
+  @Field(() => [TweetType])
+  comments: TweetType[]
+
   @Field({ nullable: true })
   imageUrl: string
 

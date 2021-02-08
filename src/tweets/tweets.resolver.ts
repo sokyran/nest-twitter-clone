@@ -91,4 +91,10 @@ export class TweetsResolver {
     const { userId } = tweet
     return await this.authService.findOne(userId)
   }
+
+  @ResolveField()
+  async comments(@Parent() tweet: TweetType) {
+    const { id } = tweet
+    return await this.tweetsService.getComments(id)
+  }
 }
