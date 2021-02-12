@@ -1,13 +1,13 @@
-import { forwardRef, Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '@nestjs/config'
-import { PassportModule } from '@nestjs/passport'
-import { JwtModule } from '@nestjs/jwt'
-import { AuthService } from './auth.service'
-import { AuthResolver } from './auth.resolver'
-import { User } from './user.entity'
-import { JwtStrategy } from './jwt.strategy'
 import { TweetsModule } from '../tweets/tweets.module'
+import { forwardRef, Module } from '@nestjs/common'
+import { PassportModule } from '@nestjs/passport'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AuthResolver } from './auth.resolver'
+import { ConfigModule } from '@nestjs/config'
+import { AuthService } from './auth.service'
+import { JwtStrategy } from './jwt.strategy'
+import { JwtModule } from '@nestjs/jwt'
+import { User } from './user.entity'
 
 @Module({
   imports: [

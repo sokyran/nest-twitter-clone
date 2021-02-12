@@ -7,15 +7,15 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql'
-import { TweetsService } from './tweets.service'
-import { CreateTweetInput } from './dto/create-tweet.input'
-import { TweetType } from './tweet.type'
-import { Logger, UseGuards } from '@nestjs/common'
-import { User } from '../auth/user.entity'
-import { GetUser } from '../auth/get-user.decorator'
-import { GqlAuthGuard } from '../auth/gql.guard'
-import { AuthService } from '../auth/auth.service'
 import { CreateCommentInput } from './dto/create-comment.input'
+import { CreateTweetInput } from './dto/create-tweet.input'
+import { GetUser } from '../auth/get-user.decorator'
+import { Logger, UseGuards } from '@nestjs/common'
+import { AuthService } from '../auth/auth.service'
+import { GqlAuthGuard } from '../auth/gql.guard'
+import { TweetsService } from './tweets.service'
+import { User } from '../auth/user.entity'
+import { TweetType } from './tweet.type'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {

@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { CreateCommentInput } from './dto/create-comment.input'
+import { CreateTweetInput } from './dto/create-tweet.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../auth/user.entity'
-import { Repository } from 'typeorm'
-import { CreateTweetInput } from './dto/create-tweet.input'
 import { Tweet } from './tweet.entity'
-import { CreateCommentInput } from './dto/create-comment.input'
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class TweetsService {

@@ -9,10 +9,10 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { TweetsService } from 'src/tweets/tweets.service'
-import { AuthService } from './auth.service'
-import { UserInfoInput } from './dto/user-info.input'
 import { UserLoginInput } from './dto/user-login.input'
+import { UserInfoInput } from './dto/user-info.input'
 import { UserType, UserWithToken } from './user.type'
+import { AuthService } from './auth.service'
 
 @Resolver(() => UserType)
 export class AuthResolver {

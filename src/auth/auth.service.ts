@@ -5,13 +5,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { UserLoginInput } from './dto/user-login.input'
 import { UserInfoInput } from './dto/user-info.input'
+import { InjectRepository } from '@nestjs/typeorm'
+import { JwtService } from '@nestjs/jwt'
+import { Repository } from 'typeorm'
 import { User } from './user.entity'
 import * as bcrypt from 'bcrypt'
-import { JwtService } from '@nestjs/jwt'
-import { UserLoginInput } from './dto/user-login.input'
 
 @Injectable()
 export class AuthService {

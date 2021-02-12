@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { TweetsService } from './tweets.service'
 import { TweetsResolver } from './tweets.resolver'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { Tweet } from './tweet.entity'
 import { AuthModule } from 'src/auth/auth.module'
+import { TweetsService } from './tweets.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from 'src/auth/user.entity'
+import { Tweet } from './tweet.entity'
 
 @Module({
   imports: [

@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common'
+import { TweetsModule } from './tweets/tweets.module'
+import * as depthLimit from 'graphql-depth-limit'
+import { AuthModule } from './auth/auth.module'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Tweet } from './tweets/tweet.entity'
-import { TweetsModule } from './tweets/tweets.module'
-import { AuthModule } from './auth/auth.module'
-import { User } from './auth/user.entity'
-import * as depthLimit from 'graphql-depth-limit'
 import { ConfigModule } from '@nestjs/config'
+import { Tweet } from './tweets/tweet.entity'
+import { User } from './auth/user.entity'
+import { Module } from '@nestjs/common'
 
 @Module({
   imports: [
