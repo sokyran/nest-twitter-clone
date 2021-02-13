@@ -10,7 +10,7 @@ import { Repository } from 'typeorm'
 export class TweetsService {
   constructor(
     @InjectRepository(Tweet) private tweetRepository: Repository<Tweet>,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>, // private readonly tweetsDataLoader: TweetsDataLoader,
   ) {}
 
   private readonly logger = new Logger('tweetService')
@@ -30,32 +30,34 @@ export class TweetsService {
     createCommentInput: CreateCommentInput,
     user: User,
   ): Promise<Tweet> {
-    const { text, imageUrl, commentParent } = createCommentInput
+    const { text, imageUrl, parentTweetId } = createCommentInput
+    const parentTweet = await this.findOne(parentTweetId)
     const tweet = new Tweet()
     tweet.text = text
     tweet.user = user
     tweet.imageUrl = imageUrl
-    tweet.commentParent = commentParent
     tweet.date = new Date().toISOString()
-    await tweet.save()
+    if (!parentTweet.comments) {
+      parentTweet.comments = [tweet]
+    } else {
+      parentTweet.comments = [...parentTweet.comments, tweet]
+    }
+    await parentTweet.save()
     return tweet
   }
 
   async findAll(withComments = false): Promise<Tweet[]> {
     const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.leftJoinAndSelect('tweet.comments', 'comments')
     query.orderBy('tweet.date', 'DESC')
     if (!withComments) {
-      query.where('tweet.commentParent IS NULL')
+      query.where('tweet.parentTweetId IS NULL')
     }
     return await query.getMany()
   }
 
-  async getComments(id: number): Promise<Tweet[]> {
-    const query = this.tweetRepository.createQueryBuilder('tweet')
-    query.where('tweet.commentParent = :tweetId', { tweetId: id })
-
-    const res = await query.getMany()
-    return res
+  async findAllByIds(ids: string[]): Promise<Tweet[]> {
+    return await this.tweetRepository.findByIds(ids)
   }
 
   async findByUser(userId: number): Promise<Tweet[]> {
@@ -63,7 +65,10 @@ export class TweetsService {
   }
 
   async findOne(id: number) {
-    const found = await this.tweetRepository.findOne({ id })
+    const found = await this.tweetRepository.findOne(
+      { id },
+      { relations: ['comments'] },
+    )
     if (found && Object.values(found).length > 0) {
       return found
     }

@@ -28,6 +28,10 @@ export class AuthService {
     return found
   }
 
+  async findAllByIds(ids: number[]): Promise<User[]> {
+    return await this.userRepository.findByIds(ids)
+  }
+
   async getLikes(id: number | null): Promise<number[]> {
     if (id === null) {
       return []

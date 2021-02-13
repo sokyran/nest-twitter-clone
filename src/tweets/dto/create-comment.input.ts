@@ -4,5 +4,5 @@ import { InputType, Field, Int } from '@nestjs/graphql'
 @InputType()
 export class CreateCommentInput extends CreateTweetInput {
   @Field(() => Int)
-  commentParent: number
+  parentTweetId: number
 }

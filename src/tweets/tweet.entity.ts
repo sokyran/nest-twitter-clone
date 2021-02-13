@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
@@ -27,9 +28,12 @@ export class Tweet extends BaseEntity {
   @Column({ nullable: true })
   imageUrl: string
 
-  @ManyToOne(() => User, (user) => user.tweets, { eager: false })
+  @ManyToOne(() => User, (user) => user.tweets)
   user: User
 
-  @Column({ nullable: true })
-  commentParent: number
+  @ManyToOne(() => Tweet, (tweet) => tweet.comments)
+  parentTweet: Tweet
+
+  @OneToMany(() => Tweet, (tweet) => tweet.parentTweet, { cascade: true })
+  comments: Tweet[]
 }

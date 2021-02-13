@@ -8,6 +8,7 @@ import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
 import { JwtModule } from '@nestjs/jwt'
 import { User } from './user.entity'
+import UsersLoader from './user.loader'
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { User } from './user.entity'
     }),
     forwardRef(() => TweetsModule),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, AuthResolver, JwtStrategy, UsersLoader],
+  exports: [AuthService, UsersLoader],
 })
 export class AuthModule {}

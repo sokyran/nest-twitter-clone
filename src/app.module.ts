@@ -20,6 +20,7 @@ import { Module } from '@nestjs/common'
       database: process.env.DB_DATABASE || 'twitter-clone',
       entities: [Tweet, User],
       synchronize: true,
+      logging: true,
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,

@@ -33,6 +33,7 @@
     "bcrypt": "^5.0.0",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
+    "dataloader": "^2.0.0",
     "graphql": "^15.4.0",
     "graphql-depth-limit": "^1.1.0",
     "graphql-tools": "^7.0.2",

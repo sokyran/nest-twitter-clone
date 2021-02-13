@@ -16,13 +16,16 @@ import { GqlAuthGuard } from '../auth/gql.guard'
 import { TweetsService } from './tweets.service'
 import { User } from '../auth/user.entity'
 import { TweetType } from './tweet.type'
+import UsersLoader from 'src/auth/user.loader'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {
   constructor(
     private readonly tweetsService: TweetsService,
     private readonly authService: AuthService,
+    private readonly usersLoader: UsersLoader,
   ) {}
+
   private readonly logger = new Logger('tweetsResolver')
 
   @Query(() => [TweetType], { name: 'tweets' })
@@ -37,11 +40,6 @@ export class TweetsResolver {
   @Query(() => TweetType, { name: 'tweet' })
   async findOne(@Args('id', { type: () => Int }) id: number) {
     return await this.tweetsService.findOne(id)
-  }
-
-  @Query(() => [TweetType], { name: 'comments' })
-  async getComments(@Args('id', { type: () => Int }) id: number) {
-    return await this.tweetsService.getComments(id)
   }
 
   @Mutation(() => TweetType)
@@ -89,12 +87,6 @@ export class TweetsResolver {
   @ResolveField()
   async user(@Parent() tweet: TweetType) {
     const { userId } = tweet
-    return await this.authService.findOne(userId)
-  }
-
-  @ResolveField()
-  async comments(@Parent() tweet: TweetType) {
-    const { id } = tweet
-    return await this.tweetsService.getComments(id)
+    return await this.usersLoader.batchUsers.load(userId)
   }
 }

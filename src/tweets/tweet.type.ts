@@ -26,7 +26,4 @@ export class TweetType {
 
   @Field({ nullable: true })
   imageUrl: string
-
-  @Field({ nullable: true })
-  commentParent: number
 }
