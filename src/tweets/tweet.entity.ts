@@ -28,12 +28,17 @@ export class Tweet extends BaseEntity {
   @Column({ nullable: true })
   imageUrl: string
 
+  @Column({ default: false })
+  isDeleted: boolean
+
   @ManyToOne(() => User, (user) => user.tweets)
   user: User
 
   @ManyToOne(() => Tweet, (tweet) => tweet.comments)
   parentTweet: Tweet
 
-  @OneToMany(() => Tweet, (tweet) => tweet.parentTweet, { cascade: true })
+  @OneToMany(() => Tweet, (tweet) => tweet.parentTweet, {
+    cascade: true,
+  })
   comments: Tweet[]
 }

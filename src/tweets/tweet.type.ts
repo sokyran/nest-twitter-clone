@@ -18,10 +18,13 @@ export class TweetType {
   @Field()
   likes: number
 
+  @Field()
+  isDeleted: boolean
+
   @Field(() => UserType)
   user: UserType
 
-  @Field(() => [TweetType])
+  @Field(() => [TweetType], { nullable: true })
   comments: TweetType[]
 
   @Field({ nullable: true })

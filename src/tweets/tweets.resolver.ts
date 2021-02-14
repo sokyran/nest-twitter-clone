@@ -11,7 +11,6 @@ import { CreateCommentInput } from './dto/create-comment.input'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { GetUser } from '../auth/get-user.decorator'
 import { Logger, UseGuards } from '@nestjs/common'
-import { AuthService } from '../auth/auth.service'
 import { GqlAuthGuard } from '../auth/gql.guard'
 import { TweetsService } from './tweets.service'
 import { User } from '../auth/user.entity'
@@ -22,7 +21,6 @@ import UsersLoader from 'src/auth/user.loader'
 export class TweetsResolver {
   constructor(
     private readonly tweetsService: TweetsService,
-    private readonly authService: AuthService,
     private readonly usersLoader: UsersLoader,
   ) {}
 
@@ -38,8 +36,12 @@ export class TweetsResolver {
   }
 
   @Query(() => TweetType, { name: 'tweet' })
-  async findOne(@Args('id', { type: () => Int }) id: number) {
-    return await this.tweetsService.findOne(id)
+  async findOne(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('loadComments', { type: () => Boolean, nullable: true })
+    loadComments: boolean,
+  ) {
+    return await this.tweetsService.findOne(id, loadComments)
   }
 
   @Mutation(() => TweetType)

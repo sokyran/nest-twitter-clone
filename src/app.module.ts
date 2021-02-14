@@ -24,7 +24,7 @@ import { Module } from '@nestjs/common'
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
-      validationRules: [depthLimit(3)],
+      validationRules: [depthLimit(5)],
     }),
     TweetsModule,
     AuthModule,

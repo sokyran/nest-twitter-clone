@@ -31,7 +31,7 @@ export class TweetsService {
     user: User,
   ): Promise<Tweet> {
     const { text, imageUrl, parentTweetId } = createCommentInput
-    const parentTweet = await this.findOne(parentTweetId)
+    const parentTweet = await this.findOne(parentTweetId, true)
     const tweet = new Tweet()
     tweet.text = text
     tweet.user = user
@@ -64,19 +64,22 @@ export class TweetsService {
     return await this.tweetRepository.find({ userId })
   }
 
-  async findOne(id: number) {
-    const found = await this.tweetRepository.findOne(
-      { id },
-      { relations: ['comments'] },
-    )
+  async findOne(id: number, loadComments: boolean) {
+    const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.where('tweet.id = :id', { id })
+    if (loadComments) {
+      query.leftJoinAndSelect('tweet.comments', 'comments')
+      query.leftJoinAndSelect('comments.comments', 'subcomments')
+    }
+    const found = await query.getOne()
     if (found && Object.values(found).length > 0) {
       return found
     }
-    throw new NotFoundException(`Tweet with "${id}" id was not found`)
+    throw new NotFoundException(`Can't find tweet with id "${id}"`)
   }
 
   async updateLikes(id: number, user: User, add = true) {
-    const found = await this.findOne(id)
+    const found = await this.findOne(id, false)
     const foundUser = await this.userRepository.findOne({ id: user.id })
     let likes = add ? found.likes + 1 : found.likes - 1
     if (likes <= 0) {
@@ -101,9 +104,9 @@ export class TweetsService {
   }
 
   async remove(id: number): Promise<any> {
-    const result = await this.tweetRepository.delete({ id })
-    if (result.affected) {
-      return result.affected
-    }
+    const found = await this.findOne(id, false)
+    found.isDeleted = true
+    await found.save()
+    return found
   }
 }
