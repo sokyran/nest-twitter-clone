@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
+import { UserUpdateInput } from './dto/user-update.input'
 import { UserLoginInput } from './dto/user-login.input'
 import { UserInfoInput } from './dto/user-info.input'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -30,6 +31,11 @@ export class AuthService {
 
   async findAllByIds(ids: number[]): Promise<User[]> {
     return await this.userRepository.findByIds(ids)
+  }
+
+  async updateUser(userUpdate: UserUpdateInput): Promise<Partial<User>> {
+    const { id } = userUpdate
+    return await this.userRepository.save({ id, ...userUpdate })
   }
 
   async getLikes(id: number | null): Promise<number[]> {

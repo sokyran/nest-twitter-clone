@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from '@nestjs/common'
+import { Logger, UseGuards, ValidationPipe } from '@nestjs/common'
 import {
   Args,
   Int,
@@ -13,6 +13,8 @@ import { UserLoginInput } from './dto/user-login.input'
 import { UserInfoInput } from './dto/user-info.input'
 import { UserType, UserWithToken } from './user.type'
 import { AuthService } from './auth.service'
+import { UserUpdateInput } from './dto/user-update.input'
+import { GqlAuthGuard } from './gql.guard'
 
 @Resolver(() => UserType)
 export class AuthResolver {
@@ -35,6 +37,16 @@ export class AuthResolver {
     @Args('userInfoInput', new ValidationPipe()) userInfo: UserInfoInput,
   ) {
     return await this.authService.signUp(userInfo)
+  }
+
+  @Mutation(() => UserType)
+  @UseGuards(GqlAuthGuard)
+  async updateProfile(
+    @Args('userUpdateInput', new ValidationPipe()) userUpdate: UserUpdateInput,
+  ) {
+    const res = await this.authService.updateUser(userUpdate)
+    this.logger.debug(res)
+    return res
   }
 
   @Mutation(() => UserWithToken)
