@@ -10,7 +10,7 @@ import { Repository } from 'typeorm'
 export class TweetsService {
   constructor(
     @InjectRepository(Tweet) private tweetRepository: Repository<Tweet>,
-    @InjectRepository(User) private userRepository: Repository<User>, // private readonly tweetsDataLoader: TweetsDataLoader,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   private readonly logger = new Logger('tweetService')
@@ -37,6 +37,9 @@ export class TweetsService {
     tweet.user = user
     tweet.imageUrl = imageUrl
     tweet.date = new Date().toISOString()
+    tweet.conversationId = parentTweet.conversationId
+      ? parentTweet.conversationId
+      : parentTweetId
     if (!parentTweet.comments) {
       parentTweet.comments = [tweet]
     } else {
@@ -101,6 +104,19 @@ export class TweetsService {
       })
     }
     return await this.tweetRepository.save({ ...found, likes })
+  }
+
+  async getCommentCount(id: number) {
+    const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.select('COUNT(*)', 'count')
+    query.where(`"tweet"."conversationId"=${Number(id)}`)
+    query.andWhere('"tweet"."conversationId" IS NOT NULL')
+    query.groupBy('"tweet"."conversationId"')
+    const res = await query.getRawOne()
+    if (res) {
+      return res.count
+    }
+    return 0
   }
 
   async remove(id: number): Promise<any> {

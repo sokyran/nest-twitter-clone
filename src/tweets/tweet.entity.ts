@@ -31,6 +31,12 @@ export class Tweet extends BaseEntity {
   @Column({ default: false })
   isDeleted: boolean
 
+  @Column({ nullable: true })
+  conversationId: number
+
+  @Column({ nullable: true })
+  commentCount: number
+
   @ManyToOne(() => User, (user) => user.tweets)
   user: User
 

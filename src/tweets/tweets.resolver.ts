@@ -11,11 +11,11 @@ import { CreateCommentInput } from './dto/create-comment.input'
 import { CreateTweetInput } from './dto/create-tweet.input'
 import { GetUser } from '../auth/get-user.decorator'
 import { Logger, UseGuards } from '@nestjs/common'
-import { GqlAuthGuard } from '../auth/gql.guard'
 import { TweetsService } from './tweets.service'
+import { GqlAuthGuard } from '../auth/gql.guard'
+import UsersLoader from 'src/auth/user.loader'
 import { User } from '../auth/user.entity'
 import { TweetType } from './tweet.type'
-import UsersLoader from 'src/auth/user.loader'
 
 @Resolver(() => TweetType)
 export class TweetsResolver {
@@ -90,5 +90,29 @@ export class TweetsResolver {
   async user(@Parent() tweet: TweetType) {
     const { userId } = tweet
     return await this.usersLoader.batchUsers.load(userId)
+  }
+
+  @ResolveField()
+  async comments(
+    @Parent() tweet: TweetType,
+    @Args('limit', { type: () => Int, nullable: true }) limit: number,
+  ) {
+    if (limit) {
+      return tweet.comments.slice(0, limit)
+    }
+    return tweet.comments
+  }
+
+  @ResolveField()
+  async commentCount(@Parent() tweet: TweetType) {
+    return await this.tweetsService.getCommentCount(tweet.id)
+  }
+
+  @ResolveField()
+  async originalTweet(@Parent() tweet: TweetType) {
+    if (tweet.conversationId) {
+      return this.tweetsService.findOne(tweet.conversationId, false)
+    }
+    return null
   }
 }

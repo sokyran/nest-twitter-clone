@@ -21,12 +21,21 @@ export class TweetType {
   @Field()
   isDeleted: boolean
 
+  @Field({ nullable: true })
+  conversationId: number
+
   @Field(() => UserType)
   user: UserType
+
+  @Field(() => TweetType, { nullable: true })
+  originalTweet: TweetType
 
   @Field(() => [TweetType], { nullable: true })
   comments: TweetType[]
 
   @Field({ nullable: true })
   imageUrl: string
+
+  @Field({ nullable: true })
+  commentCount: number
 }
