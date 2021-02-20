@@ -38,4 +38,7 @@ export class TweetType {
 
   @Field({ nullable: true })
   commentCount: number
+
+  @Field({ nullable: true })
+  inResponseTo: number
 }

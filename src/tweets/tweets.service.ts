@@ -31,7 +31,7 @@ export class TweetsService {
     user: User,
   ): Promise<Tweet> {
     const { text, imageUrl, parentTweetId } = createCommentInput
-    const parentTweet = await this.findOne(parentTweetId, true)
+    const parentTweet = await this.findOne(parentTweetId, false)
     const tweet = new Tweet()
     tweet.text = text
     tweet.user = user
@@ -40,21 +40,16 @@ export class TweetsService {
     tweet.conversationId = parentTweet.conversationId
       ? parentTweet.conversationId
       : parentTweetId
-    if (!parentTweet.comments) {
-      parentTweet.comments = [tweet]
-    } else {
-      parentTweet.comments = [...parentTweet.comments, tweet]
-    }
-    await parentTweet.save()
+    tweet.inResponseTo = parentTweetId
+    await tweet.save()
     return tweet
   }
 
   async findAll(withComments = false): Promise<Tweet[]> {
     const query = this.tweetRepository.createQueryBuilder('tweet')
-    query.leftJoinAndSelect('tweet.comments', 'comments')
     query.orderBy('tweet.date', 'DESC')
     if (!withComments) {
-      query.where('tweet.parentTweetId IS NULL')
+      query.where('tweet.inResponseTo IS NULL')
     }
     return await query.getMany()
   }
@@ -71,10 +66,17 @@ export class TweetsService {
     const query = this.tweetRepository.createQueryBuilder('tweet')
     query.where('tweet.id = :id', { id })
     if (loadComments) {
-      query.leftJoinAndSelect('tweet.comments', 'comments')
-      query.leftJoinAndSelect('comments.comments', 'subcomments')
+      query.leftJoinAndMapMany(
+        'tweet.comments',
+        Tweet,
+        'comments',
+        'comments.conversationId = :id',
+        { id },
+      )
     }
     const found = await query.getOne()
+    this.logger.debug(found)
+
     if (found && Object.values(found).length > 0) {
       return found
     }
@@ -109,7 +111,7 @@ export class TweetsService {
   async getCommentCount(id: number) {
     const query = this.tweetRepository.createQueryBuilder('tweet')
     query.select('COUNT(*)', 'count')
-    query.where(`"tweet"."conversationId"=${Number(id)}`)
+    query.where('"tweet"."conversationId"= :id', { id: Number(id) })
     query.andWhere('"tweet"."conversationId" IS NOT NULL')
     query.groupBy('"tweet"."conversationId"')
     const res = await query.getRawOne()
