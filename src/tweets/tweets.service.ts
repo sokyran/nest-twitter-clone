@@ -75,7 +75,6 @@ export class TweetsService {
       )
     }
     const found = await query.getOne()
-    this.logger.debug(found)
 
     if (found && Object.values(found).length > 0) {
       return found
