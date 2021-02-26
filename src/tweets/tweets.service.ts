@@ -45,12 +45,10 @@ export class TweetsService {
     return tweet
   }
 
-  async findAll(withComments = false): Promise<Tweet[]> {
+  async findAll(): Promise<Tweet[]> {
     const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.where('tweet.inResponseTo IS NULL')
     query.orderBy('tweet.date', 'DESC')
-    if (!withComments) {
-      query.where('tweet.inResponseTo IS NULL')
-    }
     return await query.getMany()
   }
 
@@ -58,8 +56,23 @@ export class TweetsService {
     return await this.tweetRepository.findByIds(ids)
   }
 
-  async findByUser(userId: number): Promise<Tweet[]> {
-    return await this.tweetRepository.find({ userId })
+  async findByUser(
+    usertag: string,
+    withComments: boolean,
+    loadLikes: boolean,
+  ): Promise<Tweet[]> {
+    const query = this.tweetRepository.createQueryBuilder('tweet')
+    query.orderBy('tweet.date', 'DESC')
+    query.leftJoinAndSelect('tweet.user', 'user')
+    if (!loadLikes) {
+      query.where('user.usertag = :usertag', { usertag })
+      if (!withComments) {
+        query.andWhere('tweet.inResponseTo IS NULL')
+      }
+    } else {
+      query.where('tweet.id = ALL(user.likedTweets)')
+    }
+    return await query.getMany()
   }
 
   async findOne(id: number, loadComments: boolean) {

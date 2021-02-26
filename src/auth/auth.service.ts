@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt'
 import { Repository } from 'typeorm'
 import { User } from './user.entity'
 import * as bcrypt from 'bcrypt'
+import { Profile } from './profile.entity'
 
 @Injectable()
 export class AuthService {
@@ -46,6 +47,19 @@ export class AuthService {
     return found.likedTweets
   }
 
+  async getProfile(usertag: string) {
+    const query = this.userRepository.createQueryBuilder('user')
+    query.where('user.usertag = :usertag', { usertag })
+    query.leftJoinAndMapOne(
+      'user.profile',
+      Profile,
+      'profile',
+      'profile.usertag = :usertag',
+      { usertag },
+    )
+    return await query.getOne()
+  }
+
   async signUp(userInfo: UserInfoInput): Promise<Partial<User>> {
     const { username, usertag, password, avatar } = userInfo
     const user = new User()
@@ -56,9 +70,12 @@ export class AuthService {
       user.avatar = avatar
     }
     user.password = await bcrypt.hash(password, salt)
-
     try {
       await user.save()
+      const profile = new Profile()
+      profile.usertag = usertag
+      profile.registrationDate = new Date().toDateString()
+      await profile.save()
       return { username: user.username, id: user.id, usertag: user.usertag }
     } catch (error) {
       if (error.code === '23505') {

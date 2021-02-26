@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config'
 import { Tweet } from './tweets/tweet.entity'
 import { User } from './auth/user.entity'
 import { Module } from '@nestjs/common'
+import { Profile } from './auth/profile.entity'
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { Module } from '@nestjs/common'
       username: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'twitter-clone',
-      entities: [Tweet, User],
+      entities: [Tweet, User, Profile],
       synchronize: true,
       logging: true,
     }),

@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { TweetType } from 'src/tweets/tweet.type'
+import { ProfileType } from './profile.type'
 
 @ObjectType('User')
 export class UserType {
@@ -26,4 +27,10 @@ export class UserType {
 export class UserWithToken extends UserType {
   @Field()
   accessToken: string
+}
+
+@ObjectType('UserWithProfile')
+export class UserWithProfile extends UserType {
+  @Field(() => ProfileType)
+  profile: ProfileType
 }

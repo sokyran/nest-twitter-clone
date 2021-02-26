@@ -1,7 +1,6 @@
 import { Logger, UseGuards, ValidationPipe } from '@nestjs/common'
 import {
   Args,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -9,11 +8,11 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { TweetsService } from 'src/tweets/tweets.service'
+import { UserUpdateInput } from './dto/user-update.input'
 import { UserLoginInput } from './dto/user-login.input'
 import { UserInfoInput } from './dto/user-info.input'
-import { UserType, UserWithToken } from './user.type'
+import { UserType, UserWithProfile, UserWithToken } from './user.type'
 import { AuthService } from './auth.service'
-import { UserUpdateInput } from './dto/user-update.input'
 import { GqlAuthGuard } from './gql.guard'
 
 @Resolver(() => UserType)
@@ -25,11 +24,9 @@ export class AuthResolver {
 
   private readonly logger = new Logger('authResolver')
 
-  @Query(() => [Int], { name: 'showLikes' })
-  async getLikedTweets(
-    @Args('id', { type: () => Int, nullable: true }) id: number,
-  ) {
-    return await this.authService.getLikes(id)
+  @Query(() => UserWithProfile)
+  async profile(@Args('usertag') usertag: string) {
+    return await this.authService.getProfile(usertag)
   }
 
   @Mutation(() => UserType)
@@ -56,6 +53,6 @@ export class AuthResolver {
 
   @ResolveField()
   async tweets(@Parent() user: UserType) {
-    return await this.tweetsService.findByUser(user.id)
+    return await this.tweetsService.findByUser(user.usertag, false, false)
   }
 }

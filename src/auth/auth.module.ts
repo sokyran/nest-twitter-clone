@@ -10,10 +10,11 @@ import { JwtModule } from '@nestjs/jwt'
 import { User } from './user.entity'
 import { AuthController } from './auth.controller'
 import UsersLoader from './user.loader'
+import { Profile } from './profile.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Profile]),
     ConfigModule.forRoot(),
     PassportModule,
     JwtModule.register({

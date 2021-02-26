@@ -27,11 +27,8 @@ export class TweetsResolver {
   private readonly logger = new Logger('tweetsResolver')
 
   @Query(() => [TweetType], { name: 'tweets' })
-  async findAll(
-    @Args('withComments', { type: () => Boolean, nullable: true })
-    withComments: boolean,
-  ) {
-    const res = await this.tweetsService.findAll(withComments)
+  async findAll() {
+    const res = await this.tweetsService.findAll()
     return res
   }
 
@@ -42,6 +39,22 @@ export class TweetsResolver {
     loadComments: boolean,
   ) {
     return await this.tweetsService.findOne(id, loadComments)
+  }
+
+  @Query(() => [TweetType], { name: 'tweetsByUser' })
+  async findTweetsByUser(
+    @Args('usertag', { type: () => String }) usertag: string,
+    @Args('withComments', { type: () => Boolean, nullable: true })
+    withComments: boolean,
+    @Args('loadLikes', { type: () => Boolean, nullable: true })
+    loadLikes: boolean,
+  ) {
+    const res = await this.tweetsService.findByUser(
+      usertag,
+      withComments,
+      loadLikes,
+    )
+    return res
   }
 
   @Mutation(() => TweetType)
