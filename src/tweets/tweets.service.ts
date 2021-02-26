@@ -63,14 +63,17 @@ export class TweetsService {
   ): Promise<Tweet[]> {
     const query = this.tweetRepository.createQueryBuilder('tweet')
     query.orderBy('tweet.date', 'DESC')
-    query.leftJoinAndSelect('tweet.user', 'user')
-    if (!loadLikes) {
+    if (loadLikes) {
+      const subQuery = this.userRepository.createQueryBuilder('user')
+      subQuery.select('unnest(user.likedTweets)')
+      subQuery.where(`user.usertag = '${usertag}'`)
+      query.where('tweet.id = any(' + subQuery.getQuery() + ')')
+    } else {
+      query.leftJoinAndSelect('tweet.user', 'user')
       query.where('user.usertag = :usertag', { usertag })
       if (!withComments) {
         query.andWhere('tweet.inResponseTo IS NULL')
       }
-    } else {
-      query.where('tweet.id = ALL(user.likedTweets)')
     }
     return await query.getMany()
   }
