@@ -25,7 +25,7 @@ export class AuthResolver {
   private readonly logger = new Logger('authResolver')
 
   @Query(() => UserWithProfile)
-  async profile(@Args('usertag') usertag: string) {
+  async getProfile(@Args('usertag') usertag: string) {
     return await this.authService.getProfile(usertag)
   }
 
