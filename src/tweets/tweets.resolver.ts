@@ -43,17 +43,13 @@ export class TweetsResolver {
 
   @Query(() => [TweetType], { name: 'tweetsByUser' })
   async findTweetsByUser(
-    @Args('usertag', { type: () => String }) usertag: string,
+    @Args('id', { type: () => Number }) id: number,
     @Args('withComments', { type: () => Boolean, nullable: true })
     withComments: boolean,
     @Args('loadLikes', { type: () => Boolean, nullable: true })
     loadLikes: boolean,
   ) {
-    const res = await this.tweetsService.findByUser(
-      usertag,
-      withComments,
-      loadLikes,
-    )
+    const res = await this.tweetsService.findByUser(id, withComments, loadLikes)
     return res
   }
 

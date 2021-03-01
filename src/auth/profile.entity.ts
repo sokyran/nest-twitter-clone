@@ -1,9 +1,19 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm'
 
 @Entity()
+@Unique(['userId'])
 export class Profile extends BaseEntity {
-  @PrimaryColumn()
-  usertag: string
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column()
+  userId: number
 
   @Column()
   registrationDate: string

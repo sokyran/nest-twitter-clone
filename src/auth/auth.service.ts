@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
@@ -11,7 +12,7 @@ import { UserInfoInput } from './dto/user-info.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { Repository } from 'typeorm'
-import { User } from './user.entity'
+import { User, UserWithProfile } from './user.entity'
 import * as bcrypt from 'bcrypt'
 import { Profile } from './profile.entity'
 
@@ -19,8 +20,11 @@ import { Profile } from './profile.entity'
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Profile) private profileRepository: Repository<Profile>,
     private jwtService: JwtService,
   ) {}
+
+  private logger = new Logger()
 
   async findOne(id: number): Promise<Partial<User>> {
     const found = await this.userRepository.findOne({ id })
@@ -35,29 +39,35 @@ export class AuthService {
   }
 
   async updateUser(userUpdate: UserUpdateInput): Promise<Partial<User>> {
-    const { id } = userUpdate
-    return await this.userRepository.save({ id, ...userUpdate })
+    const { id, backgroundImage, location, biography } = userUpdate
+    const newUser = await this.userRepository.save({ id, ...userUpdate })
+    const profile = await this.profileRepository.findOne({
+      userId: id,
+    })
+    profile.backgroundImage = backgroundImage
+    profile.location = location
+    profile.biography = biography
+    await profile.save()
+    return newUser
   }
 
   async getLikes(id: number | null): Promise<number[]> {
     if (id === null) {
       return []
     }
-    const found = await this.findOne(id)
-    return found.likedTweets
   }
 
-  async getProfile(usertag: string) {
+  async getProfile(id: number): Promise<UserWithProfile> {
     const query = this.userRepository.createQueryBuilder('user')
-    query.where('user.usertag = :usertag', { usertag })
+    query.where('user.id = :id', { id })
     query.leftJoinAndMapOne(
       'user.profile',
       Profile,
       'profile',
-      'profile.usertag = :usertag',
-      { usertag },
+      'profile.userId = :id',
+      { id },
     )
-    return await query.getOne()
+    return (await query.getOne()) as UserWithProfile
   }
 
   async signUp(userInfo: UserInfoInput): Promise<Partial<User>> {
@@ -73,7 +83,7 @@ export class AuthService {
     try {
       await user.save()
       const profile = new Profile()
-      profile.usertag = usertag
+      profile.userId = user.id
       profile.registrationDate = new Date().toDateString()
       await profile.save()
       return { username: user.username, id: user.id, usertag: user.usertag }

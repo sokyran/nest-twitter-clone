@@ -57,7 +57,7 @@ export class TweetsService {
   }
 
   async findByUser(
-    usertag: string,
+    id: number,
     withComments: boolean,
     loadLikes: boolean,
   ): Promise<Tweet[]> {
@@ -66,11 +66,11 @@ export class TweetsService {
     if (loadLikes) {
       const subQuery = this.userRepository.createQueryBuilder('user')
       subQuery.select('unnest(user.likedTweets)')
-      subQuery.where(`user.usertag = '${usertag}'`)
+      subQuery.where(`user.id = '${id}'`)
       query.where('tweet.id = any(' + subQuery.getQuery() + ')')
     } else {
       query.leftJoinAndSelect('tweet.user', 'user')
-      query.where('user.usertag = :usertag', { usertag })
+      query.where(`user.id = '${id}'`)
       if (!withComments) {
         query.andWhere('tweet.inResponseTo IS NULL')
       }

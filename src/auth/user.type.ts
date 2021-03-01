@@ -30,7 +30,7 @@ export class UserWithToken extends UserType {
 }
 
 @ObjectType('UserWithProfile')
-export class UserWithProfile extends UserType {
+export class UserWithProfileType extends UserType {
   @Field(() => ProfileType)
   profile: ProfileType
 }

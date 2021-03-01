@@ -9,9 +9,8 @@ export class AuthController {
   @Get('/user')
   @UseGuards(AuthGuard('jwt'))
   async getUser(@Request() req) {
-    const found = await this.authService.findOne(req.user.id)
-    delete found.password
-    return found
+    const profile = await this.authService.getProfile(req.user.id)
+    return profile
   }
 
   @Get('/')

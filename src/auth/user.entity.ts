@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm'
+import { Profile } from './profile.entity'
 
 @Entity()
 @Unique(['usertag'])
@@ -35,4 +36,8 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Tweet, (tweet) => tweet.user, { eager: false })
   tweets: Tweet
+}
+
+export class UserWithProfile extends User {
+  profile: Profile
 }

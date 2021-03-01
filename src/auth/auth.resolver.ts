@@ -11,7 +11,7 @@ import { TweetsService } from 'src/tweets/tweets.service'
 import { UserUpdateInput } from './dto/user-update.input'
 import { UserLoginInput } from './dto/user-login.input'
 import { UserInfoInput } from './dto/user-info.input'
-import { UserType, UserWithProfile, UserWithToken } from './user.type'
+import { UserType, UserWithProfileType, UserWithToken } from './user.type'
 import { AuthService } from './auth.service'
 import { GqlAuthGuard } from './gql.guard'
 
@@ -24,9 +24,9 @@ export class AuthResolver {
 
   private readonly logger = new Logger('authResolver')
 
-  @Query(() => UserWithProfile)
-  async getProfile(@Args('usertag') usertag: string) {
-    return await this.authService.getProfile(usertag)
+  @Query(() => UserWithProfileType)
+  async getProfile(@Args('id') id: number) {
+    return await this.authService.getProfile(id)
   }
 
   @Mutation(() => UserType)
@@ -53,6 +53,6 @@ export class AuthResolver {
 
   @ResolveField()
   async tweets(@Parent() user: UserType) {
-    return await this.tweetsService.findByUser(user.usertag, false, false)
+    return await this.tweetsService.findByUser(user.id, false, false)
   }
 }

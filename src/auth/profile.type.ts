@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('Profile')
 export class ProfileType {
   @Field()
-  usertag: string
+  userId: number
 
   @Field()
   registrationDate: string
